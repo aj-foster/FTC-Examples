@@ -24,6 +24,9 @@ import java.util.Arrays;
  * controller {@link Parameters#maxOutputAmps}. Be aware that exceeding the allowed current can
  * damage your devices. It is your responsibility to ensure this doesn't happen.
  *
+ * If using the REV Robotics Expansion Hub to run the I2C/SPI bridge, please ensure you have
+ * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes.
+ *
  * @author AJ Foster and Mike Nicolai
  * @version 1.0.1
  */
