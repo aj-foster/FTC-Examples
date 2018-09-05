@@ -12,10 +12,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This example uses the current time to create a moving rainbow effect on the DotStar LED strip.
  * You'll find this effect looks best when using the I2C/SPI bridge to drive the LEDs, as digital
  * outputs simply aren't fast enough to make a smooth transition.
- * 
+ *
  * ! Warning: Make sure you have updated your REV Robotics module to firmware 1.7.2 or greater.
  *
  * ! Warning: It's your job to ensure the LEDs don't draw too much current from your robot.
+ *
+ * @author AJ Foster
+ * @version 1.0.0
  */
 @TeleOp(name = "DotStar Rainbow", group = "Examples")
 public class DotStarRainbow extends OpMode {
