@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * @author AJ Foster
  * @version 1.0.0
  */
-@TeleOp(name = "Blinkin Explorer", group = "Examples")
+@TeleOp(name = "Blinkin Explorer", group = "Utilities")
 public class BlinkinExplorer extends OpMode {
 
     Servo blinkin;
