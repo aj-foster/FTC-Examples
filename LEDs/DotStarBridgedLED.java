@@ -28,7 +28,7 @@ import java.util.Arrays;
  * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes.
  *
  * @author AJ Foster and Mike Nicolai
- * @version 1.0.1
+ * @version 1.1.0
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 @I2cSensor(name = "DotStar LEDs via SPI Bridge", description = "DotStar LED strip connected via an I2C/SPI bridge", xmlTag = "DotStarBridgedLED")
@@ -327,6 +327,10 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         // Construction
         //------------------------------------------------------------------------------------------
 
+        public Pixel() {
+            reset();
+        }
+
         public Pixel(int red, int green, int blue) {
             this.red = bound(red);
             this.blue = bound(blue);
@@ -352,9 +356,23 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
          * Resets the pixel to "off" with values (0, 0, 0).
          */
         public void reset() {
-            red = 0;
-            blue = 0;
-            green = 0;
+            this.red = 0;
+            this.blue = 0;
+            this.green = 0;
+        }
+
+
+        /**
+         * Set the pixel's color values (R, G, B).
+         *
+         * @param red   Red color value.
+         * @param green Green color value.
+         * @param blue  Blue color value.
+         */
+        public void setRGB(int red, int green, int blue) {
+            this.red = bound(red);
+            this.blue = bound(blue);
+            this.green = bound(green);
         }
 
 

@@ -218,8 +218,8 @@ public class DotStarLED {
         // Number of bytes necessary to write out the pixels, including header and end frames.
         int bufferLength =
                 4                               // Header frame: 1 word of zeroes
-                + 4 * pixels.length             // Each pixel: 1 word
-                + (pixels.length + 15) / 16;    // End frame: 1 byte for every 16 pixels.
+                        + 4 * pixels.length             // Each pixel: 1 word
+                        + (pixels.length + 15) / 16;    // End frame: 1 byte for every 16 pixels.
 
         // This will be written out to the I2C device once filled.
         byte[] buffer = new byte[bufferLength];
@@ -353,6 +353,10 @@ public class DotStarLED {
         // Construction
         //------------------------------------------------------------------------------------------
 
+        public Pixel() {
+            reset();
+        }
+
         public Pixel(int red, int green, int blue) {
             this.red = bound(red);
             this.blue = bound(blue);
@@ -378,9 +382,23 @@ public class DotStarLED {
          * Resets the pixel to "off" with values (0, 0, 0).
          */
         public void reset() {
-            red = 0;
-            blue = 0;
-            green = 0;
+            this.red = 0;
+            this.blue = 0;
+            this.green = 0;
+        }
+
+
+        /**
+         * Set the pixel's color values (R, G, B).
+         *
+         * @param red   Red color value.
+         * @param green Green color value.
+         * @param blue  Blue color value.
+         */
+        public void setRGB(int red, int green, int blue) {
+            this.red = bound(red);
+            this.blue = bound(blue);
+            this.green = bound(green);
         }
 
 
