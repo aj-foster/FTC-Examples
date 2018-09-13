@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
- * Example OpMode for driving 2 motors using tank drive
+ * Example OpMode for driving 4 motors using tank drive
  *
- * This program assumes we have two DC motors (AndyMark NeveRest, REV HD Hex Motor, etc.)
+ * This program assumes we have four DC motors (AndyMark NeveRest, REV HD Hex Motor, etc.)
  * connected to wheels on the robot's drive train. We'll use the two joysticks on the first
  * driver's gamepad to control each side of the robot (left and right).
  *
@@ -15,10 +15,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * @version 1.0.0
  */
 @TeleOp(name = "4 Motor Tank Drive", group = "Examples")
-public class TwoMotorTankDrive extends OpMode {
+public class TankDriveFourMotor extends OpMode {
 
     // Declare our motor variables.
-    DcMotor left, right;
+    DcMotor left_front, left_back, right_back, right_front;
 
     @Override
     public void init() {
@@ -26,14 +26,17 @@ public class TwoMotorTankDrive extends OpMode {
         /* Initialize hardware using our configuration file. The names in quotes should match
          * what we call each motor in the "Configure Robot" menu of the phone application.
          */
-        left = hardwareMap.dcMotor.get("left_drive");
-        right = hardwareMap.dcMotor.get("right_drive");
+        left_front = hardwareMap.dcMotor.get("left_front");
+        left_back = hardwareMap.dcMotor.get("left_back");
+        right_front = hardwareMap.dcMotor.get("right_front");
+        right_back = hardwareMap.dcMotor.get("right_back");
 
         /* Since the motors are oriented in opposite directions, one side will need to be
          * reversed. Depending on which type of motors are on the robot, we may need to reverse
          * the left side instead.
          */
-        right.setDirection(DcMotor.Direction.REVERSE);
+        right_front.setDirection(DcMotor.Direction.REVERSE);
+        right_back.setDirection(DcMotor.Direction.REVERSE);
     }
 
     @Override
@@ -47,10 +50,10 @@ public class TwoMotorTankDrive extends OpMode {
         double right_power = gamepad1.right_stick_y;
 
         // Set power to the motors.
-        left.setPower(left_power);
-        right.setPower(right_power);
+        left_front.setPower(left_power);
+        left_back.setPower(left_power);
 
-        // Note: we could also do this in one line per motor.
-        // left.setPower(gamepad1.left_stick_y);
+        right_front.setPower(right_power);
+        right_back.setPower(right_power);
     }
 }
