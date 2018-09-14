@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * @author AJ Foster
  * @version 1.0.0
  */
-@TeleOp(name = "4 Motor Tank Drive", group = "Examples")
+@TeleOp(name = "2 Motor Tank Drive", group = "Examples")
 public class TankDriveTwoMotor extends OpMode {
 
     // Declare our motor variables.
