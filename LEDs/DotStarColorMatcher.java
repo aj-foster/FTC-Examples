@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
  * best on matte surfaces. Use this to get live feedback on what your robot is seeing.
  *
  * @author AJ Foster
- * @version 1.0.0
+ * @version 2.0.0
  */
 @TeleOp(name = "DotStar Color Matcher", group = "Examples")
 public class DotStarColorMatcher extends OpMode {
@@ -30,11 +30,14 @@ public class DotStarColorMatcher extends OpMode {
         // Set up color sensor.
         color = hardwareMap.colorSensor.get("color"); // Change this to your configured name!
 
-        // Set up the LEDs as a 30-pixel long strip, for this demo. Change the controller type
-        // if you use a Modern Robotics Core DIM.
-        DotStarBridgedLED.Parameters params = new DotStarBridgedLED.Parameters(DotStarBridgedLED.Controller.RevExpansionHub);
-        params.length = 30;
-        leds = new DotStarBridgedLED(params, hardwareMap.get(DotStarBridgedLED.class, "leds").getDeviceClient(), true);
+        // Set up the LEDs. Change this to your configured name.
+        leds = hardwareMap.get(DotStarBridgedLED.class, "leds");
+
+        // Use ModernRoboticsDIM if using Modern Robotics hardware.
+        leds.setController(DotStarBridgedLED.Controller.RevExpansionHub);
+
+        // Set the length of the strip.
+        leds.setLength(30);
     }
 
     @Override
@@ -63,9 +66,7 @@ public class DotStarColorMatcher extends OpMode {
 
         // Update the LEDs with the scaled colors.
         for (int i = 0; i < leds.pixels.length; i++) {
-            leds.pixels[i].red = red;
-            leds.pixels[i].blue = blue;
-            leds.pixels[i].green = green;
+            leds.setPixel(i, red, green, blue);
         }
         leds.update();
     }
