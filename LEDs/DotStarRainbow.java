@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * ! Warning: It's your job to ensure the LEDs don't draw too much current from your robot.
  *
  * @author AJ Foster
- * @version 1.0.0
+ * @version 2.0.0
  */
 @TeleOp(name = "DotStar Rainbow", group = "Examples")
 public class DotStarRainbow extends OpMode {
@@ -40,20 +40,14 @@ public class DotStarRainbow extends OpMode {
     @Override
     public void init() {
 
-        /* Set up the LEDs
-         *
-         * Here we use the advanced way of setting up the DotStar LEDs. Using the parameters class,
-         * we can set up the length of the strip and which module we're using to drive the LEDs.
-         */
+        // Set up the LEDs. Change this to your configured name.
+        leds = hardwareMap.get(DotStarBridgedLED.class, "leds");
 
-        // Use DotStarBridgedLED.Controller.ModernRoboticsDIM if that's the module driving the LEDs.
-        DotStarBridgedLED.Parameters params = new DotStarBridgedLED.Parameters(DotStarBridgedLED.Controller.RevExpansionHub);
+        // Use ModernRoboticsDIM if using Modern Robotics hardware.
+        leds.setController(DotStarBridgedLED.Controller.RevExpansionHub);
 
-        // Change this to match the number of LEDs in the strip.
-        params.length = 28;
-
-        // Set up the LED strip.
-        leds = new DotStarBridgedLED(params, hardwareMap.get(DotStarBridgedLED.class, "leds").getDeviceClient(), true);
+        // Set the length of the strip.
+        leds.setLength(30);
 
         // Set up the timer we'll use for visual effects.
         timer = new ElapsedTime();
@@ -71,6 +65,7 @@ public class DotStarRainbow extends OpMode {
 
                 // Continue until the program stops.
                 while (true) {
+                    if (Thread.interrupted()) return;
 
                     // Update each pixel in the strip.
                     for (int i = 0; i < leds.pixels.length; i++) {
@@ -80,9 +75,7 @@ public class DotStarRainbow extends OpMode {
                         int color = Color.HSVToColor(new float[]{(float) hue, 1.0f, 0.25f});
 
                         // Update individual pixels with their new color.
-                        leds.pixels[i].red = Color.red(color);
-                        leds.pixels[i].blue = Color.blue(color);
-                        leds.pixels[i].green = Color.green(color);
+                        leds.setPixel(i, color);
                     }
 
                     // Flush the current set of colors to the strip.
