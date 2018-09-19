@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.I2cAddr;
@@ -7,7 +8,8 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDeviceWithParameters;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 import com.qualcomm.robotcore.hardware.I2cWaitControl;
-import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
+import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 import java.util.Arrays;
 
@@ -21,17 +23,19 @@ import java.util.Arrays;
  * is also available.
  *
  * Output intensity is artificially limited by the theoretical maximum allowed by the digital IO
- * controller {@link Parameters#maxOutputAmps}. Be aware that exceeding the allowed current can
- * damage your devices. It is your responsibility to ensure this doesn't happen.
+ * controller {@link DotStarBridgedLED#setMaxOutputAmps(double)}. Be aware that exceeding the
+ * allowed current can damage your devices. It is your responsibility to ensure this doesn't happen.
  *
  * If using the REV Robotics Expansion Hub to run the I2C/SPI bridge, please ensure you have
- * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes.
+ * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes. Also,
+ * do not use I2C bus/port 0, as the operation of the bridge will interfere with the internal IMU.
  *
  * @author AJ Foster and Mike Nicolai
- * @version 1.1.0
+ * @version 2.0.0
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-@I2cSensor(name = "DotStar LEDs via SPI Bridge", description = "DotStar LED strip connected via an I2C/SPI bridge", xmlTag = "DotStarBridgedLED")
+@DeviceProperties(name = "DotStar LEDs via SPI Bridge", description = "DotStar LED strip connected via an I2C/SPI bridge", xmlTag = "DotStarBridgedLED")
+@I2cDeviceType()
 public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDeviceSynchSimple, DotStarBridgedLED.Parameters> {
 
     //----------------------------------------------------------------------------------------------
@@ -44,7 +48,6 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
      * Sizing can be set using {@link Parameters#length} during initialization.
      * */
     public DotStarBridgedLED.Pixel[] pixels;
-    private int[] colors;
 
 
     //----------------------------------------------------------------------------------------------
@@ -62,9 +65,8 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         this.deviceClient.setLogging(this.parameters.loggingEnabled);
         this.deviceClient.setLoggingTag(this.parameters.loggingTag);
 
-        // Create arrays for pixels and current color values.
+        // Create array for pixels.
         this.pixels = new DotStarBridgedLED.Pixel[params.length];
-        this.colors = new int[params.length * 3];
 
         for (int i = 0; i < params.length; i++) {
             pixels[i] = new DotStarBridgedLED.Pixel(0, 0, 0);
@@ -94,14 +96,142 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
     // Public API
     //----------------------------------------------------------------------------------------------
 
-    /** Reset each pixel in the set to "off". */
+    /** Reset each pixel in the strip to "off". */
     public void clear() {
         for (DotStarBridgedLED.Pixel pixel : pixels) {
             pixel.reset();
         }
     }
 
-    /** Flush the current array of pixels to the device. */
+    /**
+     * Set the pixel at index with the given color values.
+     *
+     * @param index Index of the pixel to set
+     * @param red   Red color value
+     * @param green Green color value
+     * @param blue  Blue color value
+     */
+    public void setPixel(int index, int red, int green, int blue) {
+        this.pixels[index].setRGB(red, green, blue);
+    }
+
+    /**
+     * Set the pixel at index with the given color values.
+     *
+     * @param index Index of the pixel to set
+     * @param color Color value (android.graphics.Color)
+     *
+     * @see android.graphics.Color
+     */
+    public void setPixel(int index, int color) {
+        this.pixels[index].setColor(color);
+    }
+
+    /**
+     * Get the length of the LED strip as currently set.
+     *
+     * @return Current setting of the LED strip's length.
+     */
+    public int getLength() {
+        return this.pixels.length;
+    }
+
+    /**
+     * Set the length of the LED strip.
+     *
+     * @param length Number of pixels to make available.
+     */
+    public void setLength(int length) {
+        if (length < 1) {
+            throw new IllegalArgumentException("LED strip length must be at least 1");
+        }
+
+        int oldLength = this.pixels.length;
+        this.parameters.length = length;
+
+        if (oldLength == length) {
+            return;
+        }
+        else if (oldLength > length) {
+            this.pixels = Arrays.copyOfRange(this.pixels, 0, length);
+        }
+        else {
+            this.pixels = Arrays.copyOf(this.pixels, length);
+
+            for (int i = oldLength; i < length; i++) {
+                this.pixels[i].reset();
+            }
+        }
+    }
+
+    /**
+     * Set the type of controller used to drive the LED strip.
+     *
+     * This will set the i2cMaxBuffer and maxOutputAmps settings to appropriate values for the
+     * given controller. These values can also be set manually.
+     *
+     * @param controller Controller in use.
+     */
+    public void setController(Controller controller) {
+        this.parameters.setController(controller);
+    }
+
+    /**
+     * Returns the i2cMaxBuffer setting currently in effect.
+     *
+     * @return Maximum number of bytes to be written to the I2C bus at once.
+     */
+    public int getI2cMaxBuffer() {
+        return this.parameters.i2cMaxBuffer;
+    }
+
+    /**
+     * Set the maximum number of bytes to be written to the I2C bus at once.
+     *
+     * @param buffer Maximum bytes to write
+     */
+    public void setI2cMaxBuffer(int buffer) {
+        if (buffer < 1) {
+            throw new IllegalArgumentException("I2C buffer size must be at least 1");
+        }
+
+        this.parameters.i2cMaxBuffer = buffer;
+    }
+
+    /**
+     * Returns the maxOutputAmps setting currently in effect.
+     *
+     * @return Maximum current allowed to flow to the LEDs.
+     */
+    public double getMaxOutputAmps() {
+        return this.parameters.maxOutputAmps;
+    }
+
+    /**
+     * Set the maximum current allowed to flow to the LEDs.
+     *
+     * @param amps Maximum amps to draw
+     */
+    public void setMaxOutputAmps(double amps) {
+        if (amps < 0.02) {
+            throw new IllegalArgumentException("A minimum of 0.02 amps are required to run LEDs");
+        }
+        else if (amps > 10.0) {
+            throw new IllegalArgumentException("An excessively high maximum amperage is dangerous");
+        }
+
+        this.parameters.maxOutputAmps = amps;
+    }
+
+    /**
+     * Flush the current array of pixels to the device.
+     *
+     * We attempt to perform this update in a careful manner. Total brightness of the pixels will
+     * be reduced (possibly reducing color quality) if the projected current drawn by the pixels
+     * exceeds the maxOutputAmps setting.
+     *
+     * @see DotStarBridgedLED#setMaxOutputAmps(double)
+     * */
     public void update() {
         // Number of bytes necessary to write out the pixels, including header and end frames.
         int bufferLength =
@@ -274,15 +404,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         public Parameters() {}
 
         public Parameters(Controller controller) {
-            switch (controller) {
-                case RevExpansionHub:
-                    this.i2cMaxBuffer = 100;
-                    this.maxOutputAmps = 1.5;
-                    break;
-
-                default:
-                    break;
-            }
+            setController(controller);
         }
 
         public Parameters clone() {
@@ -292,6 +414,21 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             catch (CloneNotSupportedException e)
             {
                 throw new RuntimeException("Internal error: DotStarBridgedLED.Parameters not cloneable");
+            }
+        }
+
+        public void setController(Controller controller) {
+            switch (controller) {
+                case RevExpansionHub:
+                    this.i2cMaxBuffer = 100;
+                    this.maxOutputAmps = 1.5;
+                    break;
+
+                case ModernRoboticsDIM:
+                default:
+                    this.i2cMaxBuffer = 27;
+                    this.maxOutputAmps = 0.2;
+                    break;
             }
         }
     }
@@ -311,13 +448,13 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         //------------------------------------------------------------------------------------------
 
         /** Value of the red channel, from 0 to 255. */
-        public int red;
+        private int red;
 
         /** Value of the blue channel, from 0 to 255. */
-        public int blue;
+        private int blue;
 
         /** Value of the green channel, from 0 to 255. */
-        public int green;
+        private int green;
 
         /** Estimate of maximum amps drawn per color. */
         public static final double ampsDrawn = 0.02;
@@ -373,6 +510,19 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.red = bound(red);
             this.blue = bound(blue);
             this.green = bound(green);
+        }
+
+        /**
+         * Set the pixel's color values (android.graphics.Color).
+         *
+         * @param color Color value (android.graphics.Color)
+         *
+         * @see android.graphics.Color
+         */
+        public void setColor(int color) {
+            this.red = bound(Color.red(color));
+            this.blue = bound(Color.blue(color));
+            this.green = bound(Color.green(color));
         }
 
 
