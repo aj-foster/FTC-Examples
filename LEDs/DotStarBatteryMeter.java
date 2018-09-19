@@ -13,10 +13,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  * battery indicator on DotStar LEDs. The code uses I2C/SPI-bridged LEDs by default, but LEDs
  * driven using digital outputs work as well.
  * 
- * Written for DotStarBridgedLED version 1.0.1.
+ * Written for DotStarBridgedLED version 2.0.0.
  *
  * @author AJ Foster
- * @version 1.0.0
+ * @version 2.0.0
  */
 @TeleOp(name = "DotStar Battery Meter", group = "Examples")
 public class DotStarBatteryMeter extends OpMode {
@@ -35,20 +35,14 @@ public class DotStarBatteryMeter extends OpMode {
         // On a REV Expansion Hub, the name of the sensor is the name of the hub.
         battery = hardwareMap.voltageSensor.get("Expansion Hub 1"); // Change to match your hub!
 
-        /* Set up the LEDs
-         *
-         * Here we use the advanced way of setting up the DotStar LEDs. Using the parameters class,
-         * we can set up the length of the strip and which module we're using to drive the LEDs.
-         */
+        // Set up the LEDs. Change this to your configured name.
+        leds = hardwareMap.get(DotStarBridgedLED.class, "leds");
 
-        // Use DotStarBridgedLED.Controller.ModernRoboticsDIM if that's the module driving the LEDs.
-        DotStarBridgedLED.Parameters params = new DotStarBridgedLED.Parameters(DotStarBridgedLED.Controller.RevExpansionHub);
+        // Use ModernRoboticsDIM if using Modern Robotics hardware.
+        leds.setController(DotStarBridgedLED.Controller.RevExpansionHub);
 
-        // Change this to match the number of LEDs in the strip.
-        params.length = 30;
-
-        // Set up the LED strip.
-        leds = new DotStarBridgedLED(params, hardwareMap.get(DotStarBridgedLED.class, "leds").getDeviceClient(), true);
+        // Set the length of the strip.
+        leds.setLength(30);
     }
 
     @Override
@@ -79,14 +73,10 @@ public class DotStarBatteryMeter extends OpMode {
         // Set the LEDs.
         for (int i = 0; i < leds.pixels.length; i++) {
             if (i < pixelsToLight) {
-                leds.pixels[i].red = Color.red(color);
-                leds.pixels[i].blue = Color.blue(color);
-                leds.pixels[i].green = Color.green(color);
+                leds.setPixel(i, color);
             }
             else {
-                leds.pixels[i].red = 0;
-                leds.pixels[i].blue = 0;
-                leds.pixels[i].green = 0;
+                leds.setPixel(1, 0, 0, 0);
             }
         }
         leds.update();
