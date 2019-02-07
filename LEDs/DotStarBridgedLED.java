@@ -108,8 +108,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
      *
      * @param index Index of the pixel to set
      * @param red   Red color value
-
-* @param green Green color value
+     * @param green Green color value
      * @param blue  Blue color value
      */
     public void setPixel(int index, int red, int green, int blue) {
