@@ -46,29 +46,29 @@ public class DotStarPatternTester extends OpMode {
         leds.setLength(60);
 
         // Create the twinkle pattern to run
-        twinkle = new dsPatternTwinkle(leds);
+        twinkle = new DSPatternTwinkle(leds);
 
         // Create the rainbow patterns to run.
-        rainbow = new dsPatternRainbow(leds);
-        rainbowShift = new dsPatternRainbowShift(leds);
+        rainbow = new DSPatternRainbow(leds);
+        rainbowShift = new DSPatternRainbowShift(leds);
 
         // We used Half and Half to indicate our collector contents, gold for
         // gold and silver for silver.  Since we had two collectors we split
         // the lights in half.
-        halfAndHalf = new dsPatternHalfAndHalf(leds);
+        halfAndHalf = new DSPatternHalfAndHalf(leds);
 
         // This shows how to change the pattern default colors.
         List<Integer> chaseColors = new ArrayList<Integer>();
         chaseColors.add(0, Color.BLACK);
         chaseColors.add(1, Color.GREEN);
-        chase = new dsPatternChase(leds);
+        chase = new DSPatternChase(leds);
         chase.setPatternColors(chaseColors);
 
         // We wanted to try and use a level indicator to show kids their drive
         // speed.  A traditional "voltage" indicator would go red, yellow then
         // green.  In this case we wanted the mid value to be green to show
         // where we want them to be so we updated the default colors.
-        indicator = new dsPatternLevelIndicator(leds);
+        indicator = new DSPatternLevelIndicator(leds);
         List<Integer> indicatorColors = new ArrayList<Integer>();
         indicatorColors.add(0, Color.YELLOW);
         indicatorColors.add(1, Color.GREEN);

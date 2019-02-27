@@ -15,9 +15,9 @@ package org.firstinspires.ftc.teamcode;
  */
 import android.graphics.Color;
 
-public class dsPatternHalfAndHalf extends DotStarPattern {
+public class DSPatternHalfAndHalf extends DotStarPattern {
 
-	public dsPatternHalfAndHalf(DotStarBridgedLED leds) {
+	public DSPatternHalfAndHalf(DotStarBridgedLED leds) {
     	super(leds);
     	isStatic = true;
     	numColors = 2;

@@ -17,13 +17,13 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class dsPatternRainbowShift extends DotStarPattern implements IDotStarPattern {
+public class DSPatternRainbowShift extends DotStarPattern implements IDotStarPattern {
     /* This example will use a timer to create waves of color. */
     ElapsedTime timer;
     private double lastUpdateTime;
     private int hueCount;
 
-    public dsPatternRainbowShift(DotStarBridgedLED leds) {
+    public DSPatternRainbowShift(DotStarBridgedLED leds) {
     	super(leds);
         // Set up the timer we'll use for visual effects.
         patternDelay = 0.0;

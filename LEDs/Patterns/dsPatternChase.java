@@ -19,7 +19,7 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class dsPatternChase extends DotStarPattern implements IDotStarPattern {
+public class DSPatternChase extends DotStarPattern implements IDotStarPattern {
     /* This pattern will run a chase pixel through a solid color.  Changing
      * chaseSpeed will change the time in milliseconds to shift the pixels
      * and chaseSeperation will change how far the chase goes until the next
@@ -28,7 +28,7 @@ public class dsPatternChase extends DotStarPattern implements IDotStarPattern {
     private double lastUpdateTime;
     private int chasePosition;
 
-    public dsPatternChase(DotStarBridgedLED leds) {
+    public DSPatternChase(DotStarBridgedLED leds) {
     	super(leds);
         // Set up the timer we'll use for visual effects.
         timer = new ElapsedTime();

@@ -18,13 +18,13 @@ import android.graphics.Color;
  * @version 1.0.0
  */
 
-public class dsPatternLevelIndicator extends DotStarPattern {
+public class DSPatternLevelIndicator extends DotStarPattern {
     public double maxValue = 1.0;
     public double minValue = 0.0;
     public double maxThreshold = 0.67;
     public double minThreshold = 0.33;
 
-	public dsPatternLevelIndicator(DotStarBridgedLED leds) {
+	public DSPatternLevelIndicator(DotStarBridgedLED leds) {
     	super(leds);
     	isStatic = true;
     	numColors = 3;

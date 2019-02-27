@@ -19,11 +19,11 @@ import android.graphics.Color;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class dsPatternTwinkle extends DotStarPattern implements IDotStarPattern {
+public class DSPatternTwinkle extends DotStarPattern implements IDotStarPattern {
     ElapsedTime timer;
     private double lastUpdateTime;
 
-    public dsPatternTwinkle(DotStarBridgedLED leds) {
+    public DSPatternTwinkle(DotStarBridgedLED leds) {
     	super(leds);
         // Set up the timer we'll use for visual effects.
         timer = new ElapsedTime();
