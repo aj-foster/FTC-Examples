@@ -159,7 +159,12 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.pixels = Arrays.copyOf(this.pixels, length);
 
             for (int i = oldLength; i < length; i++) {
-                this.pixels[i].reset();
+                // This will handle multiple calls of setLength.
+                if(this.pixels[i] == null) {
+                    this.pixels[i] = new DotStarBridgedLED.Pixel(0, 0, 0);
+                } else {
+                    this.pixels[i].reset();
+                }
             }
         }
     }
