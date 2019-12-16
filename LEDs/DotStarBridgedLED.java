@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
@@ -84,7 +83,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
 
     // Can be called publicly via #initialize(Parameters).
     @Override
-    protected synchronized boolean internalInitialize(@NonNull Parameters parameters) {
+    protected synchronized boolean internalInitialize(Parameters parameters) {
         this.parameters = parameters.clone();
         this.deviceClient.setI2cAddress(parameters.i2cAddr);
 
