@@ -44,7 +44,7 @@ public class DotStarRainbow extends OpMode {
         leds = hardwareMap.get(DotStarBridgedLED.class, "leds");
 
         // Use ModernRoboticsDIM if using Modern Robotics hardware.
-        leds.setController(DotStarBridgedLED.Controller.RevExpansionHub);
+        // leds.setController(DotStarBridgedLED.Controller.ModernRoboticsDIM);
 
         // Set the length of the strip.
         leds.setLength(30);

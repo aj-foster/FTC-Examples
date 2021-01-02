@@ -24,6 +24,8 @@ import java.util.Arrays;
  * Output intensity is artificially limited by the theoretical maximum allowed by the digital IO
  * controller {@link DotStarBridgedLED#setMaxOutputAmps(double)}. Be aware that exceeding the
  * allowed current can damage your devices. It is your responsibility to ensure this doesn't happen.
+ * The default Parameters allow for 1.5 amps of current (as allowed by the REV Expansion Hub). If
+ * you are using a legacy Modern Robotics Core DIM, this limit (and the I2C bus size) is too high.
  *
  * If using the REV Robotics Expansion Hub to run the I2C/SPI bridge, please ensure you have
  * firmware version 1.7.2 or greater. Otherwise, the heavy I2C write load may cause crashes. Also,
@@ -31,6 +33,7 @@ import java.util.Arrays;
  *
  * @author AJ Foster and Mike Nicolai
  * @author Rick Van Smith
+ * @version 2.1.0
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 @DeviceProperties(name = "DotStar LEDs via SPI Bridge", description = "DotStar LED strip connected via an I2C/SPI bridge", xmlTag = "DotStarBridgedLED")
@@ -388,8 +391,8 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         /** The write address of the I2C/SPI bridge. (Default: 0x50) */
         public I2cAddr i2cAddr = I2cAddr.create8bit(0x50);
 
-        /** Maximum size of the I2C buffer as determined by the hardware. (Default: 27 bytes) */
-        public int i2cMaxBuffer = 27; // Default to Modern Robotics Core DIM (lowest known).
+        /** Maximum size of the I2C buffer as determined by the hardware. (Default: 100 bytes) */
+        public int i2cMaxBuffer = 100; // Default to REV Expansion Hub.
 
         /** Number of pixels present in the LED strip. (Default: 30) */
         public int length = 30;
@@ -400,8 +403,8 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         /** Label to use when logging the actions of this device. (Default: DotStarBridgedLED) */
         public String loggingTag = "DotStarBridgedLED";
 
-        /** Maximum output current (in amps) as determined by the hardware. (Default: 0.2 amps) */
-        public double maxOutputAmps = 0.2; // Default to Modern Robotics Core DIM (lowest known).
+        /** Maximum output current (in amps) as determined by the hardware. (Default: 1.5 amps) */
+        public double maxOutputAmps = 1.5; // Default to REV Expansion Hub.
 
         /** Bridge "register" (buffer prefix) to pass-through to the LEDs. (Default: 0x01) */
         public int writeRegister = 0x01;
