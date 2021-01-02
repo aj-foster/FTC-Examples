@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 /**
@@ -22,7 +24,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  * damage your devices. It is your responsibility to ensure this doesn't happen.
  *
  * @author AJ Foster and Mike Nicolai
- * @version 1.0.1
+ * @author Rick Van Smith
  */
 public class DotStarLED {
 
@@ -230,14 +232,26 @@ public class DotStarLED {
         // Used to track the total expected current drawn.
         double current = 0.0;
 
+        // Used to track whether a write is necessary.
+        boolean pixelsHaveChanged = false;
+
         // Iterate the pixels to learn the total current drawn and collect the colors in order.
         for (int i = 0; i < pixels.length; i++) {
-            current += pixels[i].current();
+            Pixel pixel = pixels[i];
+            current += pixel.current();
 
             // When written out to the strip, we'll need the colors in BGR order.
-            colors[i * 3] = pixels[i].blue;
-            colors[i * 3 + 1] = pixels[i].green;
-            colors[i * 3 + 2] = pixels[i].red;
+            colors[i * 3] = pixel.blue;
+            colors[i * 3 + 1] = pixel.green;
+            colors[i * 3 + 2] = pixel.red;
+
+            pixelsHaveChanged = pixelsHaveChanged || pixel.getDirty();
+            pixel.setClean();
+        }
+
+        // Do not write if there's nothing to change.
+        if (!pixelsHaveChanged) {
+            return;
         }
 
         // Ensure the total current will not exceed our theoretical maximum.
@@ -337,13 +351,16 @@ public class DotStarLED {
         //------------------------------------------------------------------------------------------
 
         /** Value of the red channel, from 0 to 255. */
-        public int red;
+        private int red;
 
         /** Value of the blue channel, from 0 to 255. */
-        public int blue;
+        private int blue;
 
         /** Value of the green channel, from 0 to 255. */
-        public int green;
+        private int green;
+
+        /** Whether the pixel has been written to the LED strip. True if a write is necessary. */
+        private boolean dirty;
 
         /** Estimate of maximum amps drawn per color. */
         public static final double ampsDrawn = 0.02;
@@ -361,6 +378,7 @@ public class DotStarLED {
             this.red = bound(red);
             this.blue = bound(blue);
             this.green = bound(green);
+            this.dirty = true;
         }
 
 
@@ -385,6 +403,7 @@ public class DotStarLED {
             this.red = 0;
             this.blue = 0;
             this.green = 0;
+            this.dirty = true;
         }
 
 
@@ -399,6 +418,37 @@ public class DotStarLED {
             this.red = bound(red);
             this.blue = bound(blue);
             this.green = bound(green);
+            this.dirty = true;
+        }
+
+        /**
+         * Set the pixel's color values (android.graphics.Color).
+         *
+         * @param color Color value (android.graphics.Color)
+         *
+         * @see android.graphics.Color
+         */
+        public void setColor(int color) {
+            this.red = bound(Color.red(color));
+            this.blue = bound(Color.blue(color));
+            this.green = bound(Color.green(color));
+            this.dirty = true;
+        }
+
+        /**
+         * Notes that the pixel has been written, and need not be written again until changed.
+         */
+        public void setClean() {
+            this.dirty = false;
+        }
+
+        /**
+         * Checks whether the pixel has been changed since its last write.
+         *
+         * @return True if changed, false if no write is necessary.
+         */
+        public boolean getDirty() {
+            return this.dirty;
         }
 
 

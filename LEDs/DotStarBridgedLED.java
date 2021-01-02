@@ -30,7 +30,7 @@ import java.util.Arrays;
  * do not use I2C bus/port 0, as the operation of the bridge will interfere with the internal IMU.
  *
  * @author AJ Foster and Mike Nicolai
- * @version 2.0.0
+ * @author Rick Van Smith
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 @DeviceProperties(name = "DotStar LEDs via SPI Bridge", description = "DotStar LED strip connected via an I2C/SPI bridge", xmlTag = "DotStarBridgedLED")
@@ -45,7 +45,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
      * Array representing the individual pixel groups in the LED strip.
      *
      * Sizing can be set using {@link Parameters#length} during initialization.
-     * */
+     */
     public DotStarBridgedLED.Pixel[] pixels;
 
 
@@ -247,6 +247,9 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         // Used to track the total expected current drawn.
         double current = 0.0;
 
+        // Used to track whether a write is necessary.
+        boolean pixelsHaveChanged = false;
+
         // Iterate the pixels to learn the total current drawn and collect the colors in order.
         for (int i = 0; i < pixels.length; i++) {
             Pixel pixel = pixels[i];
@@ -256,6 +259,14 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             colors[i * 3] = pixel.blue;
             colors[i * 3 + 1] = pixel.green;
             colors[i * 3 + 2] = pixel.red;
+
+            pixelsHaveChanged = pixelsHaveChanged || pixel.getDirty();
+            pixel.setClean();
+        }
+
+        // Do not write over I2C if there's nothing to change.
+        if (!pixelsHaveChanged) {
+            return;
         }
 
         // Ensure the total current will not exceed our theoretical maximum.
@@ -455,6 +466,9 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
         /** Value of the green channel, from 0 to 255. */
         private int green;
 
+        /** Whether the pixel has been written to the LED strip. True if a write is necessary. */
+        private boolean dirty;
+
         /** Estimate of maximum amps drawn per color. */
         public static final double ampsDrawn = 0.02;
 
@@ -471,6 +485,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.red = bound(red);
             this.blue = bound(blue);
             this.green = bound(green);
+            this.dirty = true;
         }
 
 
@@ -495,6 +510,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.red = 0;
             this.blue = 0;
             this.green = 0;
+            this.dirty = true;
         }
 
 
@@ -509,6 +525,7 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.red = bound(red);
             this.blue = bound(blue);
             this.green = bound(green);
+            this.dirty = true;
         }
 
         /**
@@ -522,6 +539,23 @@ public class DotStarBridgedLED extends I2cDeviceSynchDeviceWithParameters<I2cDev
             this.red = bound(Color.red(color));
             this.blue = bound(Color.blue(color));
             this.green = bound(Color.green(color));
+            this.dirty = true;
+        }
+
+        /**
+         * Notes that the pixel has been written, and need not be written again until changed.
+         */
+        public void setClean() {
+            this.dirty = false;
+        }
+
+        /**
+         * Checks whether the pixel has been changed since its last write.
+         *
+         * @return True if changed, false if no write is necessary.
+         */
+        public boolean getDirty() {
+            return this.dirty;
         }
 
 
