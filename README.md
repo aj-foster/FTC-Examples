@@ -1,6 +1,6 @@
 # FIRST Tech Challenge Examples
 
-This repository holds example `OpMode` and `LinearOpMode` programs for the FIRST Tech Challenge robotics competition. You can use these examples to get started programming your own robot. They were written using Android Studio and the FTC App SDK available [here](https://github.com/ftctechnh/ftc_app).
+This repository holds example `OpMode` and `LinearOpMode` programs for the FIRST Tech Challenge robotics competition. You can use these examples to get started programming your own robot. They were written using Android Studio and the FTC App SDK available [here](https://github.com/FIRST-Tech-Challenge/FtcRobotController).
 
 **Warning**: Before you run any code on your robot — regardless of where it came from — you should work to fully understand how it works. Being able to predict how your program will cause the robot to move and react in certain situations is crucial for safety. *Safety FIRST.*
 
