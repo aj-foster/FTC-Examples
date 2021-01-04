@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import java.util.List;
+import org.firstinspires.ftc.teamcode.DotStarBridgedLED.Pixel;
 
 /**
  * Represents a pattern to be executed by the pattern library.
@@ -17,17 +18,16 @@ import java.util.List;
 
 public interface IDotStarPattern {
 	/**
+	 * Gets the pixels used by the pattern.
+	 * @return The list of pixels used by the pattern.
+	 */
+	Pixel[] getLeds();
+
+	/**
 	 * Gets the number of colors the chosen pattern uses.
 	 * @return The number of colors that should be passed into setPatternColors.
 	 */
 	int getNumColors();
-
-	/**
-	 * Sets an external value used by the pattern to adjust the pattern.
-	 * @param measurement A value used to adjust the pattern.  The pattern must be
-	 *   resent to adjust to the new value.
-	 */
-	void setMeasuredValue(double measurement);
 
 	/**
 	 * Sets the RGB colors of a pattern.  Each pattern uses a different number
@@ -42,19 +42,6 @@ public interface IDotStarPattern {
 	 * @return The list of colors used by the pattern.
 	 */
 	List<Integer> getPatternColors();
-
-	/**
-	 * If set to true, the pattern will not update, but remain as set in the
-	 * first pass.  False will repeatedly call update in a loop.
-	 * @param isStatic True is a single static light, false is a moving pattern
-	 */
-	void setStaticPattern(boolean isStatic);
-
-	/**
-	 * Returns whether the pattern is set to static or not.
-	 * @return True if the pattern does not update, false if it is moving.
-	 */
-	boolean isStaticPattern();
 
 	/**
 	 * The pattern decides how to use the pattern delay.  Typically this would
@@ -85,8 +72,14 @@ public interface IDotStarPattern {
 	int getPatternSpacing();
 
 	/**
-	 * Update gets called by the DotStarPatternRunner in a loop to make the
-	 * pattern update.
+	 * Sets an external value used by the pattern to adjust the pattern.
+	 * @param measurement A value used to adjust the pattern.  The pattern must be
+	 *   resent to adjust to the new value.
+	 */
+	void setMeasuredValue(double measurement);
+
+	/**
+	 * Update gets called by the opMode to make the pattern update.
 	 */
 	void update();
 }

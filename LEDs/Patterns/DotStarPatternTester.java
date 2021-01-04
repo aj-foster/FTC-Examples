@@ -28,8 +28,8 @@ public class DotStarPatternTester extends OpMode {
     IDotStarPattern chase;
     IDotStarPattern twinkle;
     IDotStarPattern indicator;
-    DotStarPatternRunner ledDisplay = new DotStarPatternRunner();
-    boolean displayIndicator = false;
+    IDotStarPattern ledDisplay;
+    IDotStarPattern workshop;
     float[] redHsv = new float[]{0f, 0f, 0f};
     float[] yellowHsv = new float[]{0f, 0f, 0f};
     float[] greenHsv = new float[]{0f, 0f, 0f};
@@ -74,53 +74,46 @@ public class DotStarPatternTester extends OpMode {
         indicatorColors.add(1, Color.GREEN);
         indicatorColors.add(2, Color.RED);
         indicator.setPatternColors(indicatorColors);
+
+        // This creates a default workshop pattern
+        workshop = new DSPatternWorkshop(leds);
     }
 
     public void start() {
-        ledDisplay.setPattern(rainbow);
-        ledDisplay.startPattern();
+        ledDisplay = rainbow;
+        ledDisplay.update();
     }
 
     @Override
     public void loop() {
         try {
             if(gamepad1.a) {
-                displayIndicator = false;
-                ledDisplay.setPattern(twinkle);
-                ledDisplay.startPattern();
+                ledDisplay = twinkle;
             } else if(gamepad1.b) {
-                displayIndicator = false;
-                ledDisplay.setPattern(halfAndHalf);
-                ledDisplay.startPattern();
+                ledDisplay = halfAndHalf;
             } else if(gamepad1.y) {
-                displayIndicator = false;
-                ledDisplay.setPattern(chase);
-                ledDisplay.startPattern();
+                ledDisplay = chase;
             } else if(gamepad1.x) {
-                displayIndicator = true;
+                ledDisplay = indicator;
             } else if (gamepad1.left_bumper) {
-                displayIndicator = false;
-                ledDisplay.setPattern(rainbow);
-                ledDisplay.startPattern();
+                ledDisplay = rainbow;
             } else if (gamepad1.right_bumper) {
-                displayIndicator = false;
-                ledDisplay.setPattern(rainbowShift);
-                ledDisplay.startPattern();
+                ledDisplay = rainbowShift;
+            } else if (gamepad1.dpad_up) {
+                ledDisplay = workshop;
             }
-            if(displayIndicator) {
-                // The indicator pattern is the only one in this tester that
-                // takes external input and puts it on the display.  In this
-                // case it is the power applied by the joystick.
-                double powerX = gamepad1.left_stick_x;
-                double powerY = gamepad1.left_stick_y;
-                double magnitude = Math.sqrt(powerX*powerX + powerY*powerY);
-                indicator.setMeasuredValue(magnitude);
-                ledDisplay.setPattern(indicator);
-                ledDisplay.startPattern();
-                telemetry.addData("Joystick X", powerX);
-                telemetry.addData("Joystick Y", powerY);
-                telemetry.addData("Joystick Magnitude", magnitude);
-            }
+
+            // The indicator pattern is the only one in this tester that
+            // takes external input and puts it on the display.  In this
+            // case it is the power applied by the joystick.
+            double powerX = gamepad1.left_stick_x;
+            double powerY = gamepad1.left_stick_y;
+            double magnitude = Math.sqrt(powerX*powerX + powerY*powerY);
+            ledDisplay.setMeasuredValue(magnitude);
+            telemetry.addData("Joystick X", powerX);
+            telemetry.addData("Joystick Y", powerY);
+            telemetry.addData("Joystick Magnitude", magnitude);
+            ledDisplay.update();
         } catch (Throwable ex) {
             telemetry.addData("Exception: ", ex.getMessage());
         }
@@ -128,6 +121,5 @@ public class DotStarPatternTester extends OpMode {
 
     @Override
     public void stop() {
-        ledDisplay.terminate();
     }
 }

@@ -20,6 +20,7 @@ import android.graphics.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.firstinspires.ftc.teamcode.DotStarBridgedLED.Pixel;
 
 public abstract class DotStarPattern implements IDotStarPattern {
     /* LEDs: Use this line if you drive the LEDs using an I2C/SPI bridge. */
@@ -40,6 +41,12 @@ public abstract class DotStarPattern implements IDotStarPattern {
 	    patternDelay = 0.0;
 	    measuredValue = 0.0;
 	}
+
+	/**
+	 * Gets the pixels used by the pattern.
+	 * @return The list of pixels used by the pattern.
+	 */
+	public Pixel[] getLeds() {return leds.pixels;}
 
 	/**
 	 * Gets the number of colors the chosen pattern uses.
