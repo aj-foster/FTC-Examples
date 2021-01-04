@@ -43,8 +43,10 @@ public class DotStarRainbow extends OpMode {
         // Set up the LEDs. Change this to your configured name.
         leds = hardwareMap.get(DotStarBridgedLED.class, "leds");
 
-        // Use ModernRoboticsDIM if using Modern Robotics hardware.
-        // leds.setController(DotStarBridgedLED.Controller.ModernRoboticsDIM);
+        // If using digital outputs, get the two digital outputs and use them for the LEDs.
+        // DigitalChannel clock = hardwareMap.digitalChannel.get("clock");
+        // DigitalChannel data = hardwareMap.digitalChannel.get("data");
+        // leds = new DotStarLED(12, clock, data);
 
         // Set the length of the strip.
         leds.setLength(30);
