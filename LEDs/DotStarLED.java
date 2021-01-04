@@ -17,13 +17,13 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  * pixels is limited by how fast the digital IO controller can switch the clock line on and off.
  * For truly awesome performance, the LEDs can be connected to an I2C port using an I2C/SPI bridge
  * module (subject to the legality of the bridge). A similar class exists to enable use of bridged
- * LEDs ({@link DotStarBridgedLED}). The default setting allows for 1.5 amps of current (as allowed
- * by the REV Expansion Hub). If you are using a legacy Modern Robotics Core DIM, this limit is too
- * high.
+ * LEDs ({@link DotStarBridgedLED}).
  *
  * Output intensity is artificially limited by the theoretical maximum allowed by the digital IO
  * controller {@link #setMaxOutputAmps(double)}. Be aware that exceeding the allowed current can
- * damage your devices. It is your responsibility to ensure this doesn't happen.
+ * damage your devices. It is your responsibility to ensure this doesn't happen. The default setting
+ * allows for 1.5 amps of current (as allowed by the REV Expansion Hub). If you are using a legacy
+ * Modern Robotics Core DIM, this limit is too high.
  *
  * @author AJ Foster and Mike Nicolai
  * @author Rick Van Smith
@@ -321,7 +321,8 @@ public class DotStarLED {
 
         // Work our way through the buffer.
         for (byte bits : buffer) {
-            for (int j = 0; j < 8; j++) {
+            // Write the byte with most-significant bit first.
+            for (int j = 7; j >= 0; j--) {
                 new_state = (bits & (0x01 << j)) > 0;
 
                 // Don't waste time setting the data line if it should stay the same.
